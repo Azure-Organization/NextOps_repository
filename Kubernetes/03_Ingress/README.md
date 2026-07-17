@@ -10,10 +10,12 @@
 * The intelligence of a Layer 7 Load Balancer comes from the routing rules that administrators configure. These rules determine how incoming requests should be processed and where they should be routed.
 * One of the major advantages of a Layer 7 Load Balancer is its ability to host multiple web applications behind a single load balancer. For example, a company such as Reliance may have multiple websites, such as:
 
-* https://jio.com/orders    --> Order Service
-* https://jio.com/payments --> Payment Service
-* https://jio.com          --> Backend
-* https://reliancefresh.com --> Backend
+```text
+https://jio.com/orders    --> Order Service
+https://jio.com/payments --> Payment Service
+https://jio.com          --> Backend
+https://reliancefresh.com --> Backend
+```
 
 * Instead of deploying a separate load balancer for each website, a single Layer 7 Load Balancer can handle traffic for all these applications. This approach helps reduce infrastructure costs and simplifies management.
 * This functionality is possible because Layer 7 Load Balancers support advanced routing features such as:
