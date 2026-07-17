@@ -74,3 +74,63 @@ job.batch/ingress-nginx-admission-create created
 job.batch/ingress-nginx-admission-patch created
 ingressclass.networking.k8s.io/nginx created
 validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission created
+
+**Why are annotations used in NGINX Ingress?**
+
+Annotations are used to **customize the behavior of the NGINX Ingress Controller for a specific Ingress resource** without changing the global NGINX configuration. The NGINX Ingress Controller reads these annotations and generates the required NGINX configuration automatically. [\[Configure...soft Learn \| Learn.Microsoft.com\]](https://learn.microsoft.com/en-us/azure/aks/app-routing-nginx-configuration), [\[bing.com\]](https://bing.com/search?q=nginx+ingress+annotations+purpose)
+
+### Simple Explanation
+
+The Ingress resource itself only defines:
+
+* Host-based routing
+* Path-based routing
+* Backend services
+
+If you need advanced features such as:
+
+* SSL redirection
+* URL rewriting
+* Rate limiting
+* Authentication
+* CORS
+* Custom timeouts
+* Session affinity (sticky sessions)
+
+you configure them through **annotations**. [\[# Ingress Nginx \| External\]](https://eng.ms/cid/d1e88b28-7f74-4736-8f95-6fcb287492ea/fid/8f436bbb960a1c72d99bf7cec446751c4fe2813ca1f7463a4bd98038785c6dfa), [\[bing.com\]](https://bing.com/search?q=nginx+ingress+annotations+purpose)
+
+### Example
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orders-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+spec:
+  ingressClassName: nginx
+```
+
+### Common Annotations
+
+| Annotation                                         | Purpose                           |
+| -------------------------------------------------- | --------------------------------- |
+| `nginx.ingress.kubernetes.io/ssl-redirect: "true"` | Redirect HTTP to HTTPS            |
+| `nginx.ingress.kubernetes.io/rewrite-target`       | Rewrite URL paths                 |
+| `nginx.ingress.kubernetes.io/proxy-body-size`      | Increase upload file size limit   |
+| `nginx.ingress.kubernetes.io/proxy-read-timeout`   | Increase backend response timeout |
+| `nginx.ingress.kubernetes.io/limit-rps`            | Rate limiting                     |
+| `nginx.ingress.kubernetes.io/enable-cors`          | Enable CORS                       |
+| `nginx.ingress.kubernetes.io/affinity: cookie`     | Sticky sessions                   |
+
+### AKS Interview-Style Answer
+
+> NGINX Ingress annotations are used to configure advanced Layer 7 load-balancing features on a per-application basis. They allow us to customize NGINX behavior such as SSL redirection, URL rewriting, authentication, rate limiting, CORS, session affinity, and timeout settings without modifying the NGINX controller's global configuration. The NGINX Ingress Controller reads these annotations and dynamically generates the appropriate NGINX configuration for the application.
+
+A simple way to remember is:
+
+**Ingress = Defines routing rules**  
+**Annotations = Define how NGINX should handle the traffic**. [\[# Ingress Nginx \| External\]](https://eng.ms/cid/d1e88b28-7f74-4736-8f95-6fcb287492ea/fid/8f436bbb960a1c72d99bf7cec446751c4fe2813ca1f7463a4bd98038785c6dfa), [\[bing.com\]](https://bing.com/search?q=nginx+ingress+annotations+purpose)
