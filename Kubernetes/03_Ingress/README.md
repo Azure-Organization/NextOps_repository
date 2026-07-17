@@ -1,5 +1,4 @@
 # Ingress:
-
 **Layer 4 Load Balancer**
 * A Layer 4 Load Balancer is a basic load balancer that operates at the Transport Layer (TCP/UDP). It does not have application-level intelligence and simply forwards incoming requests to the backend servers based on predefined rules.
 * This type of load balancer can handle any type of network traffic and can be used with various backend resources, such as Linux virtual machines, Windows virtual machines, web servers, database servers, FTP servers, and many other applications. Since it works at the transport layer, it is not application-specific and can be used for virtually any service.
@@ -134,3 +133,67 @@ A simple way to remember is:
 
 **Ingress = Defines routing rules**  
 **Annotations = Define how NGINX should handle the traffic**. [\[# Ingress Nginx \| External\]](https://eng.ms/cid/d1e88b28-7f74-4736-8f95-6fcb287492ea/fid/8f436bbb960a1c72d99bf7cec446751c4fe2813ca1f7463a4bd98038785c6dfa), [\[bing.com\]](https://bing.com/search?q=nginx+ingress+annotations+purpose)
+
+### What is an Ingress Controller?
+
+An **Ingress Controller** is a Kubernetes component that watches Ingress resources and implements the routing rules defined in them. It acts as a **Layer 7 (HTTP/HTTPS) Load Balancer** for applications running inside the cluster. [\[# Ingress Nginx \| External\]](https://eng.ms/cid/d1e88b28-7f74-4736-8f95-6fcb287492ea/fid/8f436bbb960a1c72d99bf7cec446751c4fe2813ca1f7463a4bd98038785c6dfa), [\[Configure...soft Learn \| Learn.Microsoft.com\]](https://learn.microsoft.com/en-us/azure/aks/app-routing-nginx-configuration)
+
+#### Without an Ingress Controller
+
+When you create an Ingress resource, Kubernetes only stores the routing rules. By itself, the Ingress resource does **nothing**. An Ingress Controller is required to read those rules and configure a load balancer accordingly. [\[# Ingress Nginx \| External\]](https://eng.ms/cid/d1e88b28-7f74-4736-8f95-6fcb287492ea/fid/8f436bbb960a1c72d99bf7cec446751c4fe2813ca1f7463a4bd98038785c6dfa)
+
+#### How it works
+
+1. User sends a request to the Load Balancer.
+2. The request reaches the Ingress Controller.
+3. The Ingress Controller checks the Ingress rules.
+4. It routes the request to the correct Kubernetes Service and Pods. [\[# Ingress Nginx \| External\]](https://eng.ms/cid/d1e88b28-7f74-4736-8f95-6fcb287492ea/fid/8f436bbb960a1c72d99bf7cec446751c4fe2813ca1f7463a4bd98038785c6dfa), [\[Configure...soft Learn \| Learn.Microsoft.com\]](https://learn.microsoft.com/en-us/azure/aks/app-routing-nginx-configuration)
+
+```text
+Internet
+    |
+Load Balancer
+    |
+Ingress Controller
+    |
++-------------------+
+|   AKS Cluster     |
++-------------------+
+    |         |
+ Service-A  Service-B
+    |         |
+   Pods      Pods
+```
+
+#### Common Ingress Controllers
+
+* **NGINX Ingress Controller**
+* **Azure Application Gateway Ingress Controller (AGIC)**
+* Traefik
+* HAProxy Ingress Controller
+
+#### Example
+
+Suppose you have two applications:
+
+```text
+jio.com            --> Jio Service
+reliancefresh.com  --> Fresh Service
+```
+
+The Ingress Controller can inspect the hostname and route traffic to the correct backend service. This is called **host-based routing**. It can also route based on URL paths, such as:
+
+```text
+jio.com/orders    --> Order Service
+jio.com/payments  --> Payment Service
+```
+
+This is called **path-based routing**. [\[# Ingress Nginx \| External\]](https://eng.ms/cid/d1e88b28-7f74-4736-8f95-6fcb287492ea/fid/8f436bbb960a1c72d99bf7cec446751c4fe2813ca1f7463a4bd98038785c6dfa), [\[Configure...soft Learn \| Learn.Microsoft.com\]](https://learn.microsoft.com/en-us/azure/aks/app-routing-nginx-configuration)
+
+### Simple Interview Answer
+
+> An Ingress Controller is a Kubernetes component that implements Ingress resources and provides Layer 7 load-balancing capabilities. It receives HTTP/HTTPS traffic, applies host-based or path-based routing rules, and forwards requests to the appropriate services inside the cluster. NGINX Ingress Controller and AGIC are common examples. [\[# Ingress Nginx \| External\]](https://eng.ms/cid/d1e88b28-7f74-4736-8f95-6fcb287492ea/fid/8f436bbb960a1c72d99bf7cec446751c4fe2813ca1f7463a4bd98038785c6dfa), [\[Configure...soft Learn \| Learn.Microsoft.com\]](https://learn.microsoft.com/en-us/azure/aks/app-routing-nginx-configuration)
+
+**In short:**  
+**Ingress = Routing rules**  
+**Ingress Controller = The actual Layer 7 load balancer that enforces those rules**. [\[# Ingress Nginx \| External\]](https://eng.ms/cid/d1e88b28-7f74-4736-8f95-6fcb287492ea/fid/8f436bbb960a1c72d99bf7cec446751c4fe2813ca1f7463a4bd98038785c6dfa)
