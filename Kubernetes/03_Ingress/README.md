@@ -1,4 +1,4 @@
-**Ingress:**
+# Ingress:
 
 **Layer 4 Load Balancer**
 * A Layer 4 Load Balancer is a basic load balancer that operates at the Transport Layer (TCP/UDP). It does not have application-level intelligence and simply forwards incoming requests to the backend servers based on predefined rules.
@@ -53,6 +53,7 @@ https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/#ing
 Most of them use the NGINX Ingress Controller. It is available in two variants: an open-source version and a licensed (commercial) version. In most cases, most of them choose the open-source NGINX Ingress Controller.
 
 **Deploy Nginx Ingress Controller**
+```
 pathan [ ~ ]$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/cloud/deploy.yaml
 namespace/ingress-nginx created
 serviceaccount/ingress-nginx created
@@ -73,7 +74,7 @@ job.batch/ingress-nginx-admission-create created
 job.batch/ingress-nginx-admission-patch created
 ingressclass.networking.k8s.io/nginx created
 validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission created
-
+```
 **Why are annotations used in NGINX Ingress?**
 
 Annotations are used to **customize the behavior of the NGINX Ingress Controller for a specific Ingress resource** without changing the global NGINX configuration. The NGINX Ingress Controller reads these annotations and generates the required NGINX configuration automatically. [\[Configure...soft Learn \| Learn.Microsoft.com\]](https://learn.microsoft.com/en-us/azure/aks/app-routing-nginx-configuration), [\[bing.com\]](https://bing.com/search?q=nginx+ingress+annotations+purpose)
