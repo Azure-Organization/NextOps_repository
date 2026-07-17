@@ -1,32 +1,31 @@
 **Ingress:**
 
-Layer 4 Load Balancer
-A Layer 4 Load Balancer is a basic load balancer that operates at the Transport Layer (TCP/UDP). It does not have application-level intelligence and simply forwards incoming requests to the backend servers based on predefined rules.
-This type of load balancer can handle any type of network traffic and can be used with various backend resources, such as Linux virtual machines, Windows virtual machines, web servers, database servers, FTP servers, and many other applications. Since it works at the transport layer, it is not application-specific and can be used for virtually any service.
-The Layer 4 Load Balancer simply receives a request and forwards it to one of the connected backend servers. It does not inspect the content of the request or make routing decisions based on URLs, hostnames, or other application-level information. Its primary purpose is to distribute traffic and improve the availability and reliability of applications.
+**Layer 4 Load Balancer**
+* A Layer 4 Load Balancer is a basic load balancer that operates at the Transport Layer (TCP/UDP). It does not have application-level intelligence and simply forwards incoming requests to the backend servers based on predefined rules.
+* This type of load balancer can handle any type of network traffic and can be used with various backend resources, such as Linux virtual machines, Windows virtual machines, web servers, database servers, FTP servers, and many other applications. Since it works at the transport layer, it is not application-specific and can be used for virtually any service.
+* The Layer 4 Load Balancer simply receives a request and forwards it to one of the connected backend servers. It does not inspect the content of the request or make routing decisions based on URLs, hostnames, or other application-level information. Its primary purpose is to distribute traffic and improve the availability and reliability of applications.
 
-Layer 7 Load Balancer
-A Layer 7 Load Balancer is an advanced and intelligent load balancer that operates at the Application Layer (HTTP/HTTPS). It is specifically designed for web applications and websites. Unlike a Layer 4 Load Balancer, it understands the content of web requests and can make routing decisions based on various application-level attributes.
-Layer 7 Load Balancers support only HTTP and HTTPS traffic, making them suitable for web-based applications. Other services, such as mail servers, FTP servers, or database servers, typically cannot take advantage of Layer 7 routing capabilities.
-The intelligence of a Layer 7 Load Balancer comes from the routing rules that administrators configure. These rules determine how incoming requests should be processed and where they should be routed.
-One of the major advantages of a Layer 7 Load Balancer is its ability to host multiple web applications behind a single load balancer. For example, a company such as Reliance may have multiple websites, such as:
+**Layer 7 Load Balancer**
+* A Layer 7 Load Balancer is an advanced and intelligent load balancer that operates at the Application Layer (HTTP/HTTPS). It is specifically designed for web applications and websites. Unlike a Layer 4 Load Balancer, it understands the content of web requests and can make routing decisions based on various application-level attributes.
+* Layer 7 Load Balancers support only HTTP and HTTPS traffic, making them suitable for web-based applications. Other services, such as mail servers, FTP servers, or database servers, typically cannot take advantage of Layer 7 routing capabilities.
+* The intelligence of a Layer 7 Load Balancer comes from the routing rules that administrators configure. These rules determine how incoming requests should be processed and where they should be routed.
+* One of the major advantages of a Layer 7 Load Balancer is its ability to host multiple web applications behind a single load balancer. For example, a company such as Reliance may have multiple websites, such as:
 
-https://jio.com/orders    --> Order Service
-https://jio.com/payments --> Payment Service
-https://jio.com          --> Backend
-https://reliancefresh.com --> Backend
+* https://jio.com/orders    --> Order Service
+* https://jio.com/payments --> Payment Service
+* https://jio.com          --> Backend
+* https://reliancefresh.com --> Backend
 
-Instead of deploying a separate load balancer for each website, a single Layer 7 Load Balancer can handle traffic for all these applications. This approach helps reduce infrastructure costs and simplifies management.
-This functionality is possible because Layer 7 Load Balancers support advanced routing features such as:
+* Instead of deploying a separate load balancer for each website, a single Layer 7 Load Balancer can handle traffic for all these applications. This approach helps reduce infrastructure costs and simplifies management.
+* This functionality is possible because Layer 7 Load Balancers support advanced routing features such as:
 
 Host-based Routing: Routes traffic based on the hostname requested by the client.
 Path-based Routing: Routes traffic based on the URL path requested by the client.
 
-For example:
-
-Requests for jio.com can be routed to one backend application.
-Requests for reliancefresh.com can be routed to another backend application.
-Requests for jio.com/orders can be routed to a specific service using path-based routing.
+**For example:**
+* Requests for jio.com can be routed to one backend application.
+* Requests for reliancefresh.com can be routed to another backend application.
+* Requests for jio.com/orders can be routed to a specific service using path-based routing.
 
 These advanced routing capabilities are not available in a traditional Layer 4 Load Balancer.
 
