@@ -467,6 +467,35 @@ For testing purposes, we will first deploy the **staging ClusterIssuer** by appl
 
 The ClusterIssuer will then handle certificate requests and renewal operations on behalf of the applications running in the cluster.
 
+**Note:** Technically, the certificate and private key are usually stored together in a Kubernetes TLS Secret. However, keeping your original explanation and only fixing the sentence formation:
+
+When requesting a certificate, it is divided into two parts:
+
+* **Public Certificate**
+* **Private Certificate (Private Key)**
+
+The **public certificate** is associated with the **Ingress resource** because the application is exposed through the Ingress and serves HTTPS traffic to users.
+
+The **private certificate** is stored securely in **Kubernetes Secrets**. We can create a Secret and keep the secret name as **letsencrypt**.
+
+cert-manager requests the certificate from Let's Encrypt and stores the generated certificate and private key in the configured Kubernetes Secret. The Ingress resource then references this Secret to enable HTTPS for the application.
+
+For example:
+
+```yaml
+spec:
+  tls:
+  - hosts:
+    - app.example.com
+    secretName: letsencrypt
+```
+
+In the above configuration:
+
+* The certificate and private key are stored in the Kubernetes Secret named **letsencrypt**.
+* The Ingress resource uses this Secret to serve HTTPS traffic.
+* cert-manager automatically renews the certificate before it expires and updates the Secret without manual intervention.
+
 
 ### What is cert-manager?
 
