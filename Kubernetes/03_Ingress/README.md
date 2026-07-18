@@ -341,15 +341,9 @@ Annotations        = Traffic Handling Rules
 ***
 
 # Ingress with SSL certification
-### SSL Certificate Testing with NGINX Ingress and cert-manager
+### Ingress with SSL Certification
 
-To test SSL certificates in Kubernetes, first deploy the required application and ingress resources:
-
-```bash
-kubectl apply -f nginx_deploy.yaml
-kubectl apply -f httpd_deploy.yaml
-kubectl apply -f ingress_controller.yaml
-```
+#### Install cert-manager
 
 After deploying the applications and the NGINX Ingress Controller, install **cert-manager** in the cluster.
 
@@ -402,37 +396,76 @@ deployment.apps/cert-manager-webhook created
 mutatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook created
 validatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook created
 ```
-* As the cert manger is a third party tool, the Kubernates API will get extended. In that cert-manager using main resources are
+cert-manager is a third-party tool, so it extends the Kubernetes API by creating several Custom Resource Definitions (CRDs). The main resources used by cert-manager are:
 
 ```text
-customresourcedefinition.apiextensions.k8s.io/certificaterequests.cert-manager.io created
-customresourcedefinition.apiextensions.k8s.io/certificates.cert-manager.io created
-customresourcedefinition.apiextensions.k8s.io/challenges.acme.cert-manager.io created
-customresourcedefinition.apiextensions.k8s.io/clusterissuers.cert-manager.io created
-customresourcedefinition.apiextensions.k8s.io/issuers.cert-manager.io created
-customresourcedefinition.apiextensions.k8s.io/orders.acme.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/certificaterequests.cert-manager.io
+customresourcedefinition.apiextensions.k8s.io/certificates.cert-manager.io
+customresourcedefinition.apiextensions.k8s.io/challenges.acme.cert-manager.io
+customresourcedefinition.apiextensions.k8s.io/clusterissuers.cert-manager.io
+customresourcedefinition.apiextensions.k8s.io/issuers.cert-manager.io
+customresourcedefinition.apiextensions.k8s.io/orders.acme.cert-manager.io
 ```
-These are certificate-manager using internal resources, so when this is installed one namespace also will created "cert-manager" the cert-manager resoucer and deployments will be created on this namespace
+
+These are internal cert-manager resources. When cert-manager is installed, a namespace called **cert-manager** is also created, and all cert-manager deployments and resources are deployed in that namespace.
 
 ```bash
 kubectl get deploy -n cert-manager
+
 NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
 cert-manager              1/1     1            1           9m15s
 cert-manager-cainjector   1/1     1            1           9m15s
 cert-manager-webhook      1/1     1            1           9m15s
+```
 
+```bash
 kubectl get pods -n cert-manager
+
 NAME                                      READY   STATUS    RESTARTS   AGE
 cert-manager-b65f7b9fb-xnwhs              1/1     Running   0          10m
 cert-manager-cainjector-849cbd4d5-j4h6t   1/1     Running   0          10m
 cert-manager-webhook-799f4b488-xfwv6      1/1     Running   0          10m
+```
 
+```bash
 kubectl get svc -n cert-manager
+
 NAME                   TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
 cert-manager           ClusterIP   10.0.5.16    <none>        9402/TCP   11m
 cert-manager-webhook   ClusterIP   10.0.52.70   <none>        443/TCP    11m
-
 ```
+
+### Configure cert-manager
+
+Installing cert-manager alone is not enough. After installation, we must configure the required resources for certificate management, such as:
+
+* Issuers
+* ClusterIssuers
+* Certificates
+
+Only after configuring these resources can cert-manager request, issue, and renew certificates.
+
+### Configure ClusterIssuer
+
+Next, we will configure the resources required to obtain SSL certificates. The first resource we need is a **ClusterIssuer**.
+
+A ClusterIssuer is a cluster-wide resource used by cert-manager to request and manage certificates from a Certificate Authority (CA), such as Let's Encrypt.
+
+Similar to how we create an Ingress resource for the Ingress Controller, we must create a ClusterIssuer resource for cert-manager. The ClusterIssuer is responsible for:
+
+* Requesting certificates from the Certificate Authority
+* Validating domain ownership
+* Issuing certificates
+* Renewing certificates automatically before they expire
+
+cert-manager typically supports two environments:
+
+* **Staging Environment** – Used for testing and validation purposes.
+* **Production Environment** – Used for real production workloads and trusted certificates.
+
+For testing purposes, we will first deploy the **staging ClusterIssuer** by applying the `staging-issuer.yaml` file.
+
+The ClusterIssuer will then handle certificate requests and renewal operations on behalf of the applications running in the cluster.
 
 
 ### What is cert-manager?
