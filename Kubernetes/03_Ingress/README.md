@@ -258,11 +258,7 @@ kubectl get pods -n ingress-nginx
 
 # 6. Why Do We Use Annotations in NGINX Ingress?
 
-Ingress resources only define routing.
-
-For advanced Layer 7 features, we use annotations.
-
-An annotation tells the NGINX Ingress Controller how it should handle traffic for a particular application.
+Annotations are used to **customize the behavior of the NGINX Ingress Controller for a specific Ingress resource** without changing the global NGINX configuration. The NGINX Ingress Controller reads these annotations and generates the required NGINX configuration automatically. [\[Configure...soft Learn \| Learn.Microsoft.com\]](https://learn.microsoft.com/en-us/azure/aks/app-routing-nginx-configuration), [\[bing.com\]](https://bing.com/search?q=nginx+ingress+annotations+purpose)
 
 ### Simple Rule
 
