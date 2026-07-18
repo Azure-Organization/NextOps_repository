@@ -573,6 +573,3 @@ Application
 
 > cert-manager is a Kubernetes add-on used to automate the issuance, management, and renewal of TLS/SSL certificates. It runs as pods inside the cluster and integrates with Certificate Authorities such as Let's Encrypt. Since Let's Encrypt certificates are valid for only 90 days, cert-manager automatically renews them before expiration and updates the corresponding Kubernetes Secrets. To obtain certificates from Let's Encrypt, a valid domain name is required for domain ownership validation.
 
-* 
-
-
