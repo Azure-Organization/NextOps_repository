@@ -437,6 +437,56 @@ cert-manager-webhook   ClusterIP   10.0.52.70   <none>        443/TCP    11m
 
 ### Configure cert-manager
 
+### What is cert-manager?
+
+**cert-manager** is a Kubernetes add-on that runs as one or more pods inside the cluster. Its primary purpose is to automate the issuance, management, and renewal of TLS/SSL certificates for Kubernetes applications.
+
+In production environments, cert-manager is commonly deployed to manage certificates automatically and eliminate the need for manual certificate renewal.
+
+### How cert-manager Works
+
+1. An application requires an SSL certificate.
+2. cert-manager detects the certificate request.
+3. cert-manager communicates with a Certificate Authority (CA), such as **Let's Encrypt**.
+4. Let's Encrypt validates domain ownership and issues the certificate.
+5. cert-manager stores the certificate in a Kubernetes Secret.
+6. The Ingress Controller uses the certificate to serve HTTPS traffic.
+7. cert-manager continuously monitors certificate expiry dates and automatically renews certificates before they expire.
+
+### Why Do We Need cert-manager?
+
+Without cert-manager:
+
+* Certificates must be requested manually.
+* Renewals must be performed manually.
+* There is a risk of certificate expiration causing application downtime.
+
+With cert-manager:
+
+* Certificate issuance is automated.
+* Certificate renewal is automated.
+* Certificate management becomes simpler and more reliable.
+
+### Let's Encrypt Certificate Validity
+
+Let's Encrypt certificates are typically valid for **90 days**.
+
+Without automation, administrators must manually renew certificates every three months. cert-manager automates this process by renewing certificates before they expire, ensuring uninterrupted HTTPS access.
+
+### Important Requirement: Valid Domain Name
+
+To obtain a certificate from Let's Encrypt, you must have a **valid public domain name**. During the certificate issuance process, Let's Encrypt verifies that you own or control the domain.
+
+For example:
+
+```text
+app.contoso.com
+orders.contoso.com
+api.contoso.com
+```
+
+These domains must resolve to the public IP address of your Ingress Controller so that Let's Encrypt can complete the validation process.
+
 Installing cert-manager alone is not enough. After installation, we must configure the required resources for certificate management, such as:
 
 * Issuers
@@ -495,57 +545,6 @@ In the above configuration:
 * The certificate and private key are stored in the Kubernetes Secret named **letsencrypt**.
 * The Ingress resource uses this Secret to serve HTTPS traffic.
 * cert-manager automatically renews the certificate before it expires and updates the Secret without manual intervention.
-
-
-### What is cert-manager?
-
-**cert-manager** is a Kubernetes add-on that runs as one or more pods inside the cluster. Its primary purpose is to automate the issuance, management, and renewal of TLS/SSL certificates for Kubernetes applications.
-
-In production environments, cert-manager is commonly deployed to manage certificates automatically and eliminate the need for manual certificate renewal.
-
-### How cert-manager Works
-
-1. An application requires an SSL certificate.
-2. cert-manager detects the certificate request.
-3. cert-manager communicates with a Certificate Authority (CA), such as **Let's Encrypt**.
-4. Let's Encrypt validates domain ownership and issues the certificate.
-5. cert-manager stores the certificate in a Kubernetes Secret.
-6. The Ingress Controller uses the certificate to serve HTTPS traffic.
-7. cert-manager continuously monitors certificate expiry dates and automatically renews certificates before they expire.
-
-### Why Do We Need cert-manager?
-
-Without cert-manager:
-
-* Certificates must be requested manually.
-* Renewals must be performed manually.
-* There is a risk of certificate expiration causing application downtime.
-
-With cert-manager:
-
-* Certificate issuance is automated.
-* Certificate renewal is automated.
-* Certificate management becomes simpler and more reliable.
-
-### Let's Encrypt Certificate Validity
-
-Let's Encrypt certificates are typically valid for **90 days**.
-
-Without automation, administrators must manually renew certificates every three months. cert-manager automates this process by renewing certificates before they expire, ensuring uninterrupted HTTPS access.
-
-### Important Requirement: Valid Domain Name
-
-To obtain a certificate from Let's Encrypt, you must have a **valid public domain name**. During the certificate issuance process, Let's Encrypt verifies that you own or control the domain.
-
-For example:
-
-```text
-app.contoso.com
-orders.contoso.com
-api.contoso.com
-```
-
-These domains must resolve to the public IP address of your Ingress Controller so that Let's Encrypt can complete the validation process.
 
 ### Architecture
 
