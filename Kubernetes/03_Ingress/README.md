@@ -338,5 +338,7 @@ Ingress Controller = Layer 7 Load Balancer
 
 Annotations        = Traffic Handling Rules
 ```
+***
 
-This flow (Layer 4 → Layer 7 → Ingress → Ingress Controller → NGINX Deployment → Annotations) is usually the easiest sequence to explain in AKS interviews.
+# Ingress with SSL certification
+
