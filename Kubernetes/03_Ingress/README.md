@@ -353,6 +353,10 @@ kubectl apply -f ingress_controller.yaml
 
 After deploying the applications and the NGINX Ingress Controller, install **cert-manager** in the cluster.
 
+```bash
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.7.1/cert-manager.yaml
+```
+
 ### What is cert-manager?
 
 **cert-manager** is a Kubernetes add-on that runs as one or more pods inside the cluster. Its primary purpose is to automate the issuance, management, and renewal of TLS/SSL certificates for Kubernetes applications.
