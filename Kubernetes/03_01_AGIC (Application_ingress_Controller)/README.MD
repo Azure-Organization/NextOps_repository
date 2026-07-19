@@ -117,3 +117,5 @@ Before enabling AGIC, ensure:
   * End-to-End TLS
 
 Once AGIC is configured successfully, any Kubernetes Ingress resource created in the cluster can automatically expose applications through the Azure Application Gateway without requiring manual Application Gateway configuration changes.
+
+Once AGIC has been successfully created and configured, deploy the ingress_appgw.yaml manifest file. AGIC will automatically detect the Ingress resource and configure the Azure Application Gateway with the required backend pools, listeners, health probes, and routing rules. After the configuration is complete, access the application using the Application Gateway's frontend public IP address or the configured DNS hostname.
