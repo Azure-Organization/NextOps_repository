@@ -1,4 +1,266 @@
-Absolutely. Since you're working on AKS support cases, I will explain the AKS architecture in the way a support engineer should understand it, not just for interviews.
+## AKS Architecture Overview
+
+AKS (Azure Kubernetes Service) consists of **two major parts**:
+
+### 1. Control Plane (Managed by Microsoft)
+
+This is the **brain of the cluster** and is fully managed by Azure. You don't need to patch, upgrade, or maintain it. [\[learn.microsoft.com\]](https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks/baseline-aks), [\[deepwiki.com\]](https://deepwiki.com/Azure/AKS/1.2-components-and-architecture)
+
+**Control Plane Components:**
+
+* **API Server (kube-apiserver)**
+  * Entry point for all cluster operations.
+  * `kubectl`, Azure Portal, CI/CD pipelines talk to API Server.
+
+* **etcd**
+  * Stores cluster state and configuration.
+  * Contains information about pods, services, deployments, secrets, etc.
+
+* **Scheduler**
+  * Decides on which node a pod should run.
+
+* **Controller Manager**
+  * Ensures desired state equals actual state.
+  * Example: If a deployment requires 3 pods and one crashes, it creates another.
+
+* **Cloud Controller Manager**
+  * Integrates Kubernetes with Azure resources such as:
+    * Load Balancers
+    * Public IPs
+    * Managed Disks
+    * Route Tables [\[deepwiki.com\]](https://deepwiki.com/Azure/AKS/1.2-components-and-architecture)
+
+***
+
+## 2. Data Plane (Customer Managed)
+
+This is where your application workloads run. You manage scaling, node pools, workloads, networking, and applications. [\[michaeldurkan.com\]](https://michaeldurkan.com/2026/02/08/aks-architecture-fundamentals/), [\[deepwiki.com\]](https://deepwiki.com/Azure/AKS/1.2-components-and-architecture)
+
+### Components
+
+#### Node Pools
+
+A Node Pool is a group of Azure VMs.
+
+AKS normally contains:
+
+### System Node Pool
+
+Hosts AKS system components such as:
+
+* CoreDNS
+* Metrics Server
+* CNI Components
+* Ingress Controllers
+* Other Kubernetes system pods
+
+### User Node Pool
+
+Hosts customer applications:
+
+* Web applications
+* APIs
+* Microservices
+* Background jobs
+
+Best practice:
+
+* Keep system workloads and application workloads separate. [\[medium.com\]](https://medium.com/@mbnarayn/understanding-the-key-components-of-azure-kubernetes-service-aks-c0015067bc2b), [\[michaeldurkan.com\]](https://michaeldurkan.com/2026/02/08/aks-architecture-fundamentals/)
+
+***
+
+## AKS High-Level Diagram
+
+```text
+                    ┌────────────────────────┐
+                    │      Azure Portal      │
+                    │      kubectl / CI/CD   │
+                    └───────────┬────────────┘
+                                │
+                                ▼
+                    ┌────────────────────────┐
+                    │      API Server        │
+                    └────────────────────────┘
+                                │
+            ┌───────────────────┼───────────────────┐
+            ▼                   ▼                   ▼
+      ┌─────────┐         ┌─────────┐        ┌─────────┐
+      │ Scheduler│         │  etcd   │        │Controller│
+      └─────────┘         └─────────┘        └─────────┘
+                   (Managed by Microsoft)
+
+────────────────────────────────────────────────────
+
+                    Data Plane (Your Subscription)
+
+      ┌─────────────────────────────────────────┐
+      │         System Node Pool                │
+      │ CoreDNS, Metrics Server, CNI, etc.      │
+      └─────────────────────────────────────────┘
+
+      ┌─────────────────────────────────────────┐
+      │          User Node Pool                 │
+      │ API Pods                                │
+      │ Frontend Pods                           │
+      │ Backend Pods                            │
+      └─────────────────────────────────────────┘
+```
+
+***
+
+## Networking Flow in AKS
+
+Suppose a customer accesses:
+
+```text
+https://app.contoso.com
+```
+
+Request flow:
+
+```text
+Internet
+   │
+   ▼
+Azure Load Balancer
+   │
+   ▼
+Ingress Controller
+(NGINX / AGIC)
+   │
+   ▼
+Kubernetes Service
+   │
+   ▼
+Application Pod
+```
+
+For example:
+
+```text
+User
+  ↓
+Public IP
+  ↓
+NGINX Ingress
+  ↓
+Service
+  ↓
+Pod
+```
+
+This is the flow you often troubleshoot in production incidents.
+
+***
+
+## Storage Architecture
+
+Applications often require persistent storage.
+
+```text
+Pod
+ ↓
+PVC (Persistent Volume Claim)
+ ↓
+PV (Persistent Volume)
+ ↓
+Azure Disk / Azure Files
+```
+
+Examples:
+
+* Azure Disk → Database workloads
+* Azure Files → Shared storage across pods
+
+***
+
+## Identity Architecture
+
+AKS uses:
+
+### Cluster Managed Identity
+
+Used by AKS to:
+
+* Create Load Balancers
+* Attach Disks
+* Manage VMSS
+
+### Workload Identity
+
+Used by applications to:
+
+* Access Key Vault
+* Access Storage Accounts
+* Access Azure Services
+
+Without storing secrets inside pods.
+
+***
+
+## Azure Resources Created for an AKS Cluster
+
+When AKS is deployed:
+
+```text
+Resource Group
+│
+├── AKS Cluster
+├── Node Pools (VMSS)
+├── Load Balancer
+├── Public IP
+├── NSG
+├── Route Table
+├── Managed Disks
+└── Managed Resource Group (MC_*)
+```
+
+The **MC\_ resource group** contains the infrastructure resources backing the cluster.
+
+***
+
+## Interview Question: Who Manages What?
+
+| Component                | Managed By |
+| ------------------------ | ---------- |
+| API Server               | Microsoft  |
+| etcd                     | Microsoft  |
+| Scheduler                | Microsoft  |
+| Controller Manager       | Microsoft  |
+| Node Pools               | Customer   |
+| Pods                     | Customer   |
+| Ingress                  | Customer   |
+| Applications             | Customer   |
+| Networking Configuration | Customer   |
+
+***
+
+## Easy Way to Remember
+
+```text
+Control Plane = Brain
+Node Pool     = Worker Machines
+Pod           = Application
+Service       = Load Balancer inside Kubernetes
+Ingress       = Layer 7 Entry Point
+PVC/PV        = Storage
+```
+
+For an AKS support engineer, the most commonly investigated architecture path is:
+
+```text
+Client
+ → Load Balancer
+ → Ingress Controller
+ → Service
+ → Pod
+ → Node
+ → Node Pool
+ → Control Plane
+```
+
+Understanding this flow helps you quickly isolate whether an issue belongs to **Ingress, Networking, DNS, Node, Pod, VMSS, or the AKS control plane**.
+
 
 ## AKS Architecture Overview
 
