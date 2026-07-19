@@ -1,7 +1,5 @@
 ## AKS Architecture Overview
 
-<img width="2455" height="1735" alt="image" src="https://github.com/user-attachments/assets/5ec0ce94-daa0-441e-84f7-8a77aaf51454" />
-
 AKS (Azure Kubernetes Service) consists of **two major parts**:
 
 ### 1. Control Plane (Managed by Microsoft)
