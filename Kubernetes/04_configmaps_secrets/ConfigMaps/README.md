@@ -1,6 +1,6 @@
 ## ConfigMap
 
-in **AKS (Azure Kubernetes Service)** is a Kubernetes object used to store **non-sensitive configuration data** as key-value pairs. It allows you to separate application configuration from the container image, making your applications easier to manage and deploy. [\[Quickstart...soft Learn \| Learn.Microsoft.com\]](https://learn.microsoft.com/en-us/azure/azure-app-configuration/quickstart-azure-kubernetes-service), [\[kubernetes.io\]](https://kubernetes.io/docs/concepts/configuration/configmap/)
+in **AKS (Azure Kubernetes Service)** is a Kubernetes object used to store **non-sensitive configuration data** as key-value pairs. It allows you to separate application configuration from the container image, making your applications easier to manage and deploy. https://learn.microsoft.com/en-us/azure/azure-app-configuration/quickstart-azure-kubernetes-service https://kubernetes.io/docs/concepts/configuration/configmap/
 
 ### Why use a ConfigMap?
 
